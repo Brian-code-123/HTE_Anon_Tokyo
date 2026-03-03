@@ -1,0 +1,102 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://origraph.dev/schemas/origraph-proof-bundle-v1.json",
+  "title": "Origraph Proof Bundle v1",
+  "type": "object",
+  "required": [
+    "bundle_id",
+    "spec",
+    "hashing",
+    "issuer",
+    "signature",
+    "watermark",
+    "anchors",
+    "verification_hints"
+  ],
+  "properties": {
+    "bundle_id": {
+      "type": "string",
+      "pattern": "^opb1_[0-9a-f]{64}$"
+    },
+    "spec": {
+      "type": "string",
+      "const": "origraph-proof-bundle/v1"
+    },
+    "hashing": {
+      "type": "object",
+      "required": ["algorithm", "text_hash", "input_encoding", "normalization"],
+      "properties": {
+        "algorithm": { "type": "string", "const": "sha256" },
+        "text_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "input_encoding": { "type": "string" },
+        "normalization": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "issuer": {
+      "type": "object",
+      "required": ["issuer_id", "name", "eth_address"],
+      "properties": {
+        "issuer_id": { "type": "integer" },
+        "name": { "type": "string" },
+        "eth_address": { "type": ["string", "null"] },
+        "public_key_hex": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "signature": {
+      "type": "object",
+      "required": ["scheme", "signed_payload", "signature_hex", "recoverable_address"],
+      "properties": {
+        "scheme": { "type": "string" },
+        "signed_payload": { "type": "string" },
+        "signature_hex": { "type": "string", "pattern": "^0x[0-9a-fA-F]+$" },
+        "recoverable_address": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "watermark": {
+      "type": "object",
+      "required": ["detected", "tag_count", "payloads"],
+      "properties": {
+        "detected": { "type": "boolean" },
+        "tag_count": { "type": "integer", "minimum": 0 },
+        "payloads": { "type": "array", "items": { "type": "object" } }
+      },
+      "additionalProperties": true
+    },
+    "anchors": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["type", "network", "tx_hash", "block_num", "timestamp", "data_hash"],
+        "properties": {
+          "type": { "type": "string" },
+          "network": { "type": "string" },
+          "tx_hash": { "type": "string" },
+          "block_num": { "type": "integer", "minimum": 0 },
+          "timestamp": { "type": "string" },
+          "data_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "chain_id": { "type": ["integer", "null"] },
+          "contract_address": { "type": ["string", "null"] },
+          "event_signature": { "type": ["string", "null"] },
+          "log_index": { "type": ["integer", "null"] }
+        },
+        "additionalProperties": true
+      }
+    },
+    "verification_hints": {
+      "type": "object",
+      "required": ["chain_id", "contract_address", "event_signature", "rpc_urls"],
+      "properties": {
+        "chain_id": { "type": ["integer", "null"] },
+        "contract_address": { "type": ["string", "null"] },
+        "event_signature": { "type": "string" },
+        "rpc_urls": { "type": "array", "items": { "type": "string" } }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,6 +1,6 @@
-# Text Fetcher — Chrome Extension
+# Origraph — Chrome Extension
 
-Detects zero-width character watermarks embedded in web page text. Companion tool for the [watermark-llamacpp](../README.md) system.
+Detects zero-width character watermarks embedded in web page text. Companion tool for the Origraph registry demo.
 
 ## Features
 
@@ -23,6 +23,25 @@ Detects zero-width character watermarks embedded in web page text. Companion too
    - **Auto-Detect** — scans the page and highlights tainted text
    - **Selection Scan** — select text to see a floating verdict badge
 3. The active tab reloads automatically when switching modes
+
+## Provenance Verification Modes
+
+Current mode (`v2.0.0`) is backend-assisted:
+
+- Content script sends selected text to extension background service.
+- Background service calls `POST /api/registry/verify` on the configured registry backend.
+
+Target decentralized mode (`proof-bundle v1`):
+
+- Verifier recomputes text hash locally.
+- Verifier recovers signer from `signature_hex` locally.
+- Verifier validates anchor directly against chain RPC (`evm_log` anchor type).
+- Backend remains optional fallback only.
+
+See:
+
+- [Origraph Proof Bundle v1](../docs/specs/ORIGRAPH_PROOF_BUNDLE_V1.md)
+- [Proof Bundle JSON Schema](../docs/specs/origraph-proof-bundle-v1.schema.json)
 
 ## Files
 

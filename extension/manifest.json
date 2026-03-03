@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Text Fetcher",
+  "name": "Origraph",
   "version": "2.0.0",
-  "description": "Detect zero-width watermarks — auto-highlight or scan selected text.",
+  "description": "Origraph zero-width watermark detector — auto-highlight or scan selected text.",
   "permissions": ["activeTab", "scripting", "tabs", "storage"],
   "host_permissions": ["<all_urls>"],
   "background": {

@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Origraph | Verifiable AI Provenance</title>
+    <meta
+      name="description"
+      content="Origraph demonstrates watermarking, signing, and anchoring for verifiable AI output provenance."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="noise"></div>
+    <div class="orb orb-a"></div>
+    <div class="orb orb-b"></div>
+    <div class="orb orb-c"></div>
+
+    <main class="shell">
+      <header class="hero section">
+        <p class="eyebrow">ORIGRAPH</p>
+        <h1>Proof-Carrying AI Output, Visible to Everyone.</h1>
+        <p class="lede">
+          A deterministic demo of how AI text can be invisibly watermarked, cryptographically signed, and anchored so
+          any verifier can check provenance.
+        </p>
+
+        <div class="hero-strip">
+          <div class="strip-item">Watermark</div>
+          <div class="strip-item">Sign</div>
+          <div class="strip-item">Anchor</div>
+          <div class="strip-item">Verify</div>
+          <div class="strip-item">Watermark</div>
+          <div class="strip-item">Sign</div>
+          <div class="strip-item">Anchor</div>
+          <div class="strip-item">Verify</div>
+        </div>
+      </header>
+
+      <section class="section grid-3 stagger">
+        <article class="panel">
+          <h2>1. Invisible Watermark</h2>
+          <p>
+            Output text includes zero-width payload metadata that does not alter visible copy but survives normal
+            reading flows.
+          </p>
+        </article>
+        <article class="panel">
+          <h2>2. Cryptographic Signature</h2>
+          <p>
+            The issuer signs the SHA-256 digest of the delivered text. Any verifier can recover signer identity from
+            the signature.
+          </p>
+        </article>
+        <article class="panel">
+          <h2>3. Public Anchor</h2>
+          <p>
+            Proof records can be anchored to a chain event so verification no longer depends on trusting one backend.
+          </p>
+        </article>
+      </section>
+
+      <section class="section split">
+        <div class="panel terminal">
+          <p class="terminal-title">Proof Bundle v1</p>
+          <pre>{
+  "spec": "origraph-proof-bundle/v1",
+  "hashing": { "algorithm": "sha256" },
+  "signature": { "scheme": "eip191_personal_sign" },
+  "anchors": [{ "type": "evm_log" }]
+}</pre>
+        </div>
+
+        <div class="panel timeline">
+          <div class="timeline-step">
+            <span class="dot"></span>
+            <div>
+              <h3>Issuer Generates</h3>
+              <p>Model output is emitted and watermarked.</p>
+            </div>
+          </div>
+          <div class="timeline-step">
+            <span class="dot"></span>
+            <div>
+              <h3>Issuer Signs</h3>
+              <p>Hash is signed with issuer private key.</p>
+            </div>
+          </div>
+          <div class="timeline-step">
+            <span class="dot"></span>
+            <div>
+              <h3>Anchor Published</h3>
+              <p>Proof is committed to an immutable log.</p>
+            </div>
+          </div>
+          <div class="timeline-step">
+            <span class="dot"></span>
+            <div>
+              <h3>User Verifies</h3>
+              <p>Extension or API confirms text hash + signer + anchor.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section panel quote">
+        <p>
+          "Provenance should be verifiable by anyone with a public key, not by trusting screenshots, claims, or private
+          databases."
+        </p>
+      </section>
+
+      <footer class="section footer">
+        <p>Origraph demo landing</p>
+        <p>Built for non-interactive product storytelling and Vercel deployment.</p>
+      </footer>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guided Demo – Origraph</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/registry/style.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="/registry" class="nav-brand">&#x1f6e1;&#xfe0f; Origraph</a>
+    <a href="/registry">Dashboard</a>
+    <a href="/registry/demo" class="active">Demo</a>
+    <a href="/registry/companies">Companies</a>
+    <a href="/registry/anchor">Anchor</a>
+    <a href="/registry/verify">Verify</a>
+    <a href="/registry/chain">Chain</a>
+  </nav>
+
+  <div class="container">
+    <div class="page-header">
+      <h1>Guided Live Demo</h1>
+      <p>Reliable step-by-step path for mixed technical and business audiences.</p>
+    </div>
+
+    <div class="role-grid">
+      <div class="card role-card">
+        <div class="card-header"><h2>Demo Health</h2></div>
+        <div id="healthBox" class="result-box visible result-info">Checking environment...</div>
+      </div>
+      <div class="card role-card">
+        <div class="card-header"><h2>Chain Status</h2></div>
+        <div id="chainBox" class="result-box visible result-info">Loading chain data...</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Known-Good Scenario</h2></div>
+      <p class="text-muted" style="font-size:13px; margin-bottom:12px;">
+        Use this deterministic payload to avoid API volatility during demos.
+      </p>
+      <div id="scenarioBox" class="result-box visible result-info">Loading fixture scenario...</div>
+      <div class="mt-4" style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button class="btn" onclick="resetDemoState()">Reset Demo State</button>
+        <button class="btn" onclick="loadScenario()">Reload Scenario</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><h2>Recommended Flow</h2></div>
+      <ol class="text-muted" style="padding-left: 18px; font-size: 13px; line-height: 1.9;">
+        <li>Start in <strong>Company View</strong>, generate/anchor one response.</li>
+        <li>Move to <strong>User View</strong>, verify the exact text.</li>
+        <li>Tamper one word and verify again to show failure detection.</li>
+      </ol>
+      <div class="mt-3" style="display:flex; gap:12px; flex-wrap:wrap;">
+        <a href="/registry/demo/company" class="btn btn-primary">Open Company View &rarr;</a>
+        <a href="/registry/demo/user" class="btn btn-primary">Open User View &rarr;</a>
+        <a href="/registry/chain" class="btn">Open Chain Explorer</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API = '';
+
+    function showBox(id, type, html) {
+      const el = document.getElementById(id);
+      el.className = 'result-box visible ' + type;
+      el.innerHTML = html;
+    }
+
+    async function loadHealth() {
+      try {
+        const resp = await fetch(API + '/api/health');
+        const data = await resp.json();
+        if (!resp.ok) {
+          showBox('healthBox', 'result-error', data.detail || JSON.stringify(data));
+          return;
+        }
+        const minimaxStatus = data.minimax_required
+          ? (data.minimax_api_key_configured ? 'ready' : 'missing key')
+          : 'optional in fixture mode';
+        showBox(
+          'healthBox',
+          data.status === 'ok' ? 'result-success' : 'result-warn',
+          `Status: <strong>${data.status}</strong><br>Demo mode: <span class="mono">${data.demo_mode}</span><br>MiniMax: ${minimaxStatus}`
+        );
+
+        const chain = data.chain || {};
+        showBox(
+          'chainBox',
+          chain.valid ? 'result-success' : 'result-warn',
+          `Length: <strong>${chain.length || 0}</strong><br>Valid: <strong>${chain.valid ? 'yes' : 'no'}</strong><br>${chain.message || ''}`
+        );
+      } catch (e) {
+        showBox('healthBox', 'result-error', `Health check failed: ${e.message}`);
+        showBox('chainBox', 'result-error', `Chain status failed: ${e.message}`);
+      }
+    }
+
+    async function loadScenario() {
+      try {
+        const resp = await fetch(API + '/api/demo/scenario');
+        const data = await resp.json();
+        if (!resp.ok) {
+          showBox('scenarioBox', 'result-error', data.detail || JSON.stringify(data));
+          return;
+        }
+
+        localStorage.setItem('demo_latest_raw_text', data.raw_text || '');
+        localStorage.setItem('demo_latest_watermarked_text', data.watermarked_text || '');
+
+        showBox(
+          'scenarioBox',
+          'result-success',
+          `Scenario: <strong>${data.name}</strong><br>` +
+          `Expected first block: <strong>#${data.expected_first_block}</strong><br>` +
+          `Deterministic hash: <span class="hash">${data.sha256_hash}</span>`
+        );
+      } catch (e) {
+        showBox('scenarioBox', 'result-error', `Scenario load failed: ${e.message}`);
+      }
+    }
+
+    async function resetDemoState() {
+      try {
+        const resp = await fetch(API + '/api/demo/reset', { method: 'POST' });
+        const data = await resp.json();
+        if (!resp.ok) {
+          showBox('scenarioBox', 'result-error', data.detail || JSON.stringify(data));
+          return;
+        }
+        showBox('scenarioBox', 'result-success', `Demo state reset. DB: <span class="mono">${data.db_path}</span>`);
+        await loadHealth();
+      } catch (e) {
+        showBox('scenarioBox', 'result-error', `Reset failed: ${e.message}`);
+      }
+    }
+
+    loadHealth();
+    loadScenario();
+  </script>
+</body>
+</html>
